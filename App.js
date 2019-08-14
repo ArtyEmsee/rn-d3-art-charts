@@ -1,49 +1,43 @@
-// @flow
-'use strict';
+import React, { Component } from "react";
+import { Text, ScrollView, View } from "react-native";
 
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  ScrollView,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-
-import AreaSpline from './js/charts/AreaSpline';
-import Pie from './js/charts/Pie';
-import Theme from './js/theme';
-import data from './resources/data';
+import AreaSpline from "./js/charts/AreaSpline";
+import Pie from "./js/charts/Pie";
+import Theme from "./js/theme";
+import data from "./resources/data";
 
 type State = {
   activeIndex: number,
-  spendingsPerYear: any
-}
+  exercisesPerYear: any
+};
 
 export default class App extends Component {
-
   state: State;
 
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 0,
-      spendingsPerYear: data.spendingsPerYear,
+      exercisesPerYear: data.exercisesPerYear
     };
     this._onPieItemSelected = this._onPieItemSelected.bind(this);
     this._shuffle = this._shuffle.bind(this);
   }
 
-  _onPieItemSelected(newIndex){
-    this.setState({...this.state, activeIndex: newIndex, spendingsPerYear: this._shuffle(data.spendingsPerYear)});
+  _onPieItemSelected(newIndex) {
+    this.setState({
+      ...this.state,
+      activeIndex: newIndex,
+      exercisesPerYear: this._shuffle(data.exercisesPerYear)
+    });
   }
 
   _shuffle(a) {
-      for (let i = a.length; i; i--) {
-          let j = Math.floor(Math.random() * i);
-          [a[i - 1], a[j]] = [a[j], a[i - 1]];
-      }
-      return a;
+    for (let i = a.length; i; i--) {
+      let j = Math.floor(Math.random() * i);
+      [a[i - 1], a[j]] = [a[j], a[i - 1]];
+    }
+    return a;
   }
 
   render() {
@@ -51,23 +45,72 @@ export default class App extends Component {
     const width = 500;
 
     return (
-      <ScrollView>
-        <View style={styles.container} >
-          <Text style={styles.chart_title}>Distribution of spending this month</Text>
-          <Pie
-            pieWidth={150}
-            pieHeight={150}
-            onItemSelected={this._onPieItemSelected}
-            colors={Theme.colors}
-            width={width}
-            height={height}
-            data={data.spendingsLastMonth} />
-          <Text style={styles.chart_title}>Spending per year in {data.spendingsLastMonth[this.state.activeIndex].name}</Text>
-          <AreaSpline
-            width={width}
-            height={height}
-            data={this.state.spendingsPerYear}
-            color={Theme.colors[this.state.activeIndex]} />
+      <ScrollView style={{ borderWidth: 1, borderColor: "red" }}>
+        <View style={styles.container}>
+          <View style={styles.subContainer}>
+            <Text style={styles.chart_title}>
+              Distribution of exercise this month
+            </Text>
+            <Pie
+              pieWidth={150}
+              pieHeight={150}
+              onItemSelected={this._onPieItemSelected}
+              colors={Theme.colors}
+              width={width}
+              height={height}
+              data={data.exercisesLastMonth}
+            />
+          </View>
+
+          <View style={styles.subContainer}>
+            <Text style={styles.chart_title}>
+              Pace for {data.exercisesLastMonth[this.state.activeIndex].name}
+            </Text>
+            <AreaSpline
+              width={width}
+              height={height}
+              data={this.state.exercisesPerYear}
+              color={Theme.colors[this.state.activeIndex]}
+            />
+          </View>
+
+          <View style={styles.subContainer}>
+            <Text style={styles.chart_title}>
+              Speed for {data.exercisesLastMonth[this.state.activeIndex].name}
+            </Text>
+            <AreaSpline
+              width={width}
+              height={height}
+              data={this.state.exercisesPerYear}
+              color={Theme.colors[this.state.activeIndex]}
+            />
+          </View>
+
+          <View style={styles.subContainer}>
+            <Text style={styles.chart_title}>
+              Elevation for{" "}
+              {data.exercisesLastMonth[this.state.activeIndex].name}
+            </Text>
+            <AreaSpline
+              width={width}
+              height={height}
+              data={this.state.exercisesPerYear}
+              color={Theme.colors[this.state.activeIndex]}
+            />
+          </View>
+
+          <View style={styles.subContainer}>
+            <Text style={styles.chart_title}>
+              Heart Rate for
+              {data.exercisesLastMonth[this.state.activeIndex].name}
+            </Text>
+            <AreaSpline
+              width={width}
+              height={height}
+              data={this.state.exercisesPerYear}
+              color={Theme.colors[this.state.activeIndex]}
+            />
+          </View>
         </View>
       </ScrollView>
     );
@@ -76,17 +119,20 @@ export default class App extends Component {
 
 const styles = {
   container: {
-    backgroundColor:'whitesmoke',
-    marginTop: 21,
+    backgroundColor: "rgb(245, 247, 249)",
+    marginTop: 20,
+    borderColor: "orange",
+    borderWidth: 1
   },
-  chart_title : {
-    paddingTop: 15,
-    textAlign: 'center',
-    paddingBottom: 5,
-    paddingLeft: 5,
-    fontSize: 18,
-    backgroundColor:'white',
-    color: 'grey',
-    fontWeight:'bold',
+  subContainer: {
+    borderTopWidth: 1,
+    borderTopColor: "grey",
+    paddingTop: 10
+  },
+  chart_title: {
+    textAlign: "center",
+    fontSize: 12,
+    color: "grey",
+    fontWeight: "bold"
   }
-}
+};

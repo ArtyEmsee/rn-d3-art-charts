@@ -1,7 +1,7 @@
 // @flow
-'use strict';
+"use strict";
 
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -9,31 +9,23 @@ import {
   ART,
   LayoutAnimation,
   Dimensions,
-  TouchableWithoutFeedback,
-} from 'react-native';
+  TouchableWithoutFeedback
+} from "react-native";
 
-const {
-  Surface,
-  Group,
-  Rectangle,
-  Shape,
-} = ART;
+const { Surface, Group, Rectangle, Shape } = ART;
 
-import * as scale from 'd3-scale';
-import * as shape from 'd3-shape';
-import * as d3Array from 'd3-array';
-import AnimShape from '../art/AnimShape';
-import Theme from '../theme';
+import * as scale from "d3-scale";
+import * as shape from "d3-shape";
+import * as d3Array from "d3-array";
+import AnimShape from "../art/AnimShape";
+import Theme from "../theme";
 
 const d3 = {
   scale,
-  shape,
+  shape
 };
 
-import {
-    scaleBand,
-    scaleLinear
-} from 'd3-scale';
+import { scaleBand, scaleLinear } from "d3-scale";
 
 type Props = {
   height: number,
@@ -45,11 +37,10 @@ type Props = {
 };
 
 type State = {
-  highlightedIndex: number,
+  highlightedIndex: number
 };
 
 class Pie extends React.Component {
-
   state: State;
 
   constructor(props: Props) {
@@ -64,39 +55,47 @@ class Pie extends React.Component {
 
   // methods used to tranform data into piechart:
   // TODO: Expose them as part of the interface
-  _value(item) { return item.number; }
+  _value(item) {
+    return item.number;
+  }
 
-  _label(item) { return item.name; }
+  _label(item) {
+    return item.name;
+  }
 
-  _color(index) { return Theme.colors[index]; }
+  _color(index) {
+    return Theme.colors[index];
+  }
 
   _createPieChart(index) {
+    var arcs = d3.shape.pie().value(this._value)(this.props.data);
 
-    var arcs = d3.shape.pie()
-        .value(this._value)
-        (this.props.data);
-
-    var hightlightedArc = d3.shape.arc()
-      .outerRadius(this.props.pieWidth/2 + 10)
-      .padAngle(.05)
+    var hightlightedArc = d3.shape
+      .arc()
+      .outerRadius(this.props.pieWidth / 2 + 10)
+      .padAngle(0.05)
       .innerRadius(30);
 
-    var arc = d3.shape.arc()
-      .outerRadius(this.props.pieWidth/2)
-      .padAngle(.05)
+    var arc = d3.shape
+      .arc()
+      .outerRadius(this.props.pieWidth / 2)
+      .padAngle(0.05)
       .innerRadius(30);
 
     var arcData = arcs[index];
-    var path = (this.state.highlightedIndex == index) ? hightlightedArc(arcData) : arc(arcData);
+    var path =
+      this.state.highlightedIndex == index
+        ? hightlightedArc(arcData)
+        : arc(arcData);
 
-     return {
-       path,
-       color: this._color(index),
-     };
+    return {
+      path,
+      color: this._color(index)
+    };
   }
 
   _onPieItemSelected(index) {
-    this.setState({...this.state, highlightedIndex: index});
+    this.setState({ ...this.state, highlightedIndex: index });
     this.props.onItemSelected(index);
   }
 
@@ -108,32 +107,45 @@ class Pie extends React.Component {
     return (
       <View width={this.props.width} height={this.props.height}>
         <Surface width={this.props.width} height={this.props.height}>
-           <Group x={x} y={y}>
-           {
-              this.props.data.map( (item, index) =>
-              (<AnimShape
-                 key={'pie_shape_' + index}
-                 color={this._color(index)}
-                 d={ () => this._createPieChart(index)}
-              />)
-              )
-            }
-           </Group>
+          <Group x={x} y={y}>
+            {this.props.data.map((item, index) => (
+              <AnimShape
+                fromPie
+                key={"pie_shape_" + index}
+                color={this._color(index)}
+                d={() => this._createPieChart(index)}
+              />
+            ))}
+          </Group>
         </Surface>
-        <View style={{position: 'absolute', top:margin, left: 2*margin + this.props.pieWidth}}>
-          {
-            this.props.data.map( (item, index) =>
-            {
-              var fontWeight = this.state.highlightedIndex == index ? 'bold' : 'normal';
-              return (
-                <TouchableWithoutFeedback key={index} onPress={() => this._onPieItemSelected(index)}>
-                  <View>
-                    <Text style={[styles.label, {color: this._color(index), fontWeight: fontWeight}]}>{this._label(item)}: {this._value(item)}%</Text>
-                  </View>
-                </TouchableWithoutFeedback>
-              );
-            })
-          }
+        <View
+          style={{
+            position: "absolute",
+            top: margin,
+            left: 2 * margin + this.props.pieWidth
+          }}
+        >
+          {this.props.data.map((item, index) => {
+            var fontWeight =
+              this.state.highlightedIndex == index ? "bold" : "normal";
+            return (
+              <TouchableWithoutFeedback
+                key={index}
+                onPress={() => this._onPieItemSelected(index)}
+              >
+                <View>
+                  <Text
+                    style={[
+                      styles.label,
+                      { color: this._color(index), fontWeight: fontWeight }
+                    ]}
+                  >
+                    {this._label(item)}: {this._value(item)}%
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            );
+          })}
         </View>
       </View>
     );
@@ -142,12 +154,12 @@ class Pie extends React.Component {
 
 const styles = {
   container: {
-    margin: 20,
+    margin: 20
   },
   label: {
     fontSize: 15,
     marginTop: 5,
-    fontWeight: 'normal',
+    fontWeight: "normal"
   }
 };
 

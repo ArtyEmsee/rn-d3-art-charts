@@ -1,38 +1,24 @@
-// @flow
-'use strict';
+import React from "react";
+import { ART, LayoutAnimation } from "react-native";
 
-import React from 'react';
-import {
-  ART,
-  LayoutAnimation,
-} from 'react-native';
+const { Shape } = ART;
 
-const {
-  Shape,
-} = ART;
-
-import Morph from 'art/morph/path';
-
-import * as shape from 'd3-shape';
-
-const d3 = {
-  shape,
-};
+import Morph from "art/morph/path";
 
 type Props = {
   color: any,
   d: () => any,
+  fromPie: boolean
 };
 
-const AnimationDurationMs = 250;
+const AnimationDurationMs = 500;
 
 export default class AnimShape extends React.Component {
-
   constructor(props: Props) {
     super(props);
     this.state = {
-      path: '',
-    }
+      path: ""
+    };
   }
 
   componentWillMount() {
@@ -45,14 +31,12 @@ export default class AnimShape extends React.Component {
 
   // Animations based on: https://github.com/hswolff/BetterWeather
   computeNextState(nextProps) {
-    const {
-      d,
-    } = nextProps;
+    const { d } = nextProps;
 
     const graph = this.props.d();
 
     this.setState({
-      path: graph.path,
+      path: graph.path
     });
 
     // The first time this function is hit we need to set the initial
@@ -82,16 +66,20 @@ export default class AnimShape extends React.Component {
         )
       );
 
-      this.setState({
-        // Create the ART Morph.Tween instance.
-        path: Morph.Tween( // eslint-disable-line new-cap
-          pathFrom,
-          pathTo,
-        ),
-      }, () => {
-        // Kick off our animations!
-        this.animate();
-      });
+      this.setState(
+        {
+          // Create the ART Morph.Tween instance.
+          path: Morph.Tween(
+            // eslint-disable-line new-cap
+            pathFrom,
+            pathTo
+          )
+        },
+        () => {
+          // Kick off our animations!
+          this.animate();
+        }
+      );
 
       this.previousGraph = graph;
     }
@@ -99,7 +87,7 @@ export default class AnimShape extends React.Component {
 
   // This is where we animate our graph's path value.
   animate(start) {
-    this.animating = requestAnimationFrame((timestamp) => {
+    this.animating = requestAnimationFrame(timestamp => {
       if (!start) {
         start = timestamp;
       }
@@ -109,11 +97,10 @@ export default class AnimShape extends React.Component {
 
       // If we're above 1 then our animation should be complete.
       if (delta > 1) {
-
         this.animating = null;
         // Just to be safe set our final value to the new graph path.
         this.setState({
-          path: this.previousGraph.path,
+          path: this.previousGraph.path
         });
 
         // Stop our animation loop.
@@ -132,11 +119,11 @@ export default class AnimShape extends React.Component {
   render() {
     const path = this.state.path;
     return (
-       <Shape
-         d={path}
-         stroke={this.props.color}
-         fill={this.props.color}
-         />
+      <Shape
+        d={path}
+        stroke={this.props.color}
+        fill={this.props.fromPie ? this.props.color : "rgb(245, 247, 249)"}
+      />
     );
   }
 }
